@@ -1,0 +1,90 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: user
+    password: password
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+
+  data:
+    redis:
+      port: 6379
+      host: localhost
+      channels:
+        calculations_channel:
+          name: calculations_channel
+        user_banner_channel:
+          name: user_banner_channel
+        like_channel:
+          name: like_channel
+        comment_channel:
+          name: comment-channel
+  aop:
+    proxy-target-class: true
+
+  kafka:
+    producer:
+      bootstrap-servers: "localhost:9092"
+      client-id: "post_producer"
+
+application:
+  kafka:
+    topic:
+      post-views : "post_views"
+
+server:
+  port: 8081
+
+logging:
+  level:
+    root: info
+
+post:
+  publisher:
+    scheduler:
+      cron: "0 0/1 * 1/1 * ?" # every minute
+  ad-remover:
+    scheduler:
+      cron: "0 0/1 * 1/1 * ?" # every minute
+  moderator:
+    scheduler:
+      cron: "0 0/1 * 1/1 * ?" # every minute
+      batchSize: 100
+  moderateComment:
+    cron: "0 0 0 * * *" # every day
+    batchSize: 1000
+  user-banner:
+    cron: "0 0 0 * * ?" #At 00:00 (noon) every day
+  corrector:
+    cron: "0 0 0 * * ?"
+#    Create an account https://textgears.com/user/login and generate api key
+    api-key: wrong-key
+    url: https://api.textgears.com/correct?text=
+
+
+user-service:
+  host: localhost
+  port: 8080
+project-service:
+  host: localhost
+  port: 8082
+payment-service:
+  host: localhost
+  port: 9080
+
+springfox:
+  documentation:
+    swagger:
+      v2:
+        path=/api-docs-post-service:
